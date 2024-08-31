@@ -1,4 +1,5 @@
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -11,6 +12,7 @@ import React from 'react';
 import { AntDesign, EvilIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import axios from 'axios';
 
 const SignUp = () => {
   const [form, setForm] = React.useState({
@@ -19,8 +21,21 @@ const SignUp = () => {
     password: '',
   });
 
-  const handleSignUp = () => {
-    router.push('/(auth)/sign-in');
+  const {name, email, password} = form;
+  
+  const handleSignUp = async () => {
+      const response = await axios.post(`http://localhost:3000/register`, {
+        name,
+        email,
+        password,
+      });
+
+      if (response.status === 201) {
+        Alert.alert('Success', 'User registered successfully');
+        router.push('/(page)/home')
+      } else {
+        Alert.alert('Error', 'Error registering user');
+      }
   };
 
   return (
@@ -41,7 +56,7 @@ const SignUp = () => {
           placeholder="Name"
           placeholderTextColor="#ccc"
           style={styles.input}
-          value={form.name}
+          value={name}
           onChangeText={(text) => setForm({ ...form, name: text })}
           keyboardType="default"
         />
@@ -53,7 +68,7 @@ const SignUp = () => {
           placeholder="Email"
           placeholderTextColor="#ccc"
           style={styles.input}
-          value={form.email}
+          value={email}
           onChangeText={(text) => setForm({ ...form, email: text })}
           keyboardType="email-address"
         />
@@ -65,9 +80,9 @@ const SignUp = () => {
           placeholder="Password"
           placeholderTextColor="#ccc"
           style={styles.input}
-          value={form.password}
+          value={password}
           onChangeText={(text) => setForm({ ...form, password: text })}
-          secureTextEntry
+          secureTextEntry={false}
         />
         <AntDesign name="eye" size={20} color="#ccc" />
       </View>
@@ -78,14 +93,14 @@ const SignUp = () => {
 
       <TouchableOpacity
         style={styles.loginButton}
-        onPress={() => router.push('/(page)/home')}
+        onPress={handleSignUp}
       >
         <Text style={styles.loginText}>SignUp</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.createAccountButton}
-        onPress={handleSignUp}
+        onPress={() => router.push('/(auth)/sign-in')}
       >
         <Text style={styles.createAccountText}>
           Already have an account?{' '}

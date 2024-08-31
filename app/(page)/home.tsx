@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LocationObject } from 'expo-location';
 import { Attendance, DealerLocation, LocationHistory } from '@/types/type';
+import { AuthContext } from '@/context/AuthContext';
 
 const LOCATION_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
@@ -16,6 +17,7 @@ const DEALER_LOCATIONS: DealerLocation[] = [
 
 
 const Home = () => {
+  const {logout} = useContext(AuthContext);
   const [currentLocation, setCurrentLocation] = useState<LocationObject | null>(null);
   const [locationHistory, setLocationHistory] = useState<LocationHistory[]>([]);
   const [attendance, setAttendance] = useState<Attendance>({ clockIn: null, clockOut: null });
@@ -140,6 +142,9 @@ const Home = () => {
         <Text>Check In: {attendance.clockIn ? new Date(attendance.clockIn).toLocaleTimeString() : '00:00:00'}</Text>
         <Text>Check Out: {attendance.clockOut ? new Date(attendance.clockOut).toLocaleTimeString() : '00:00:00'}</Text>
       </View>
+      <View style={{marginBottom: 12}}>
+      <Button title="Logout" onPress={logout} />
+      </View>
     </View>
   );
 };
@@ -159,8 +164,6 @@ const styles = StyleSheet.create({
   attendanceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 10,
-    marginBottom: 8
   },
 });
 

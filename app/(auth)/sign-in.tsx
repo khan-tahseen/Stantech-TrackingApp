@@ -1,4 +1,5 @@
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -7,12 +8,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import { AntDesign, EvilIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import axios from 'axios';
+import { AuthContext } from '@/context/AuthContext';
 
 const SignIn = () => {
+  const { login } = useContext(AuthContext);
+  const [form, setForm] = React.useState({
+    email: '',
+    password: '',
+  });
+
+  const { email, password } = form;
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -30,6 +41,8 @@ const SignIn = () => {
           placeholder="Email"
           placeholderTextColor="#ccc"
           style={styles.input}
+          value={email}
+          onChangeText={(text) => setForm({ ...form, email: text })}
           keyboardType="email-address"
         />
       </View>
@@ -40,7 +53,9 @@ const SignIn = () => {
           placeholder="Password"
           placeholderTextColor="#ccc"
           style={styles.input}
-          secureTextEntry
+          value={password}
+          onChangeText={(text) => setForm({ ...form, password: text })}
+          secureTextEntry={false}
         />
         <AntDesign name="eye" size={20} color="#ccc" />
       </View>
@@ -51,7 +66,7 @@ const SignIn = () => {
 
       <TouchableOpacity
         style={styles.loginButton}
-        onPress={() => router.push('/(page)/home')}
+        onPress={() => login(email, password)}
       >
         <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
